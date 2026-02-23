@@ -4,7 +4,6 @@ import { /*DataFrame,*/ Field, formattedValueToString, getFieldDisplayName, Graf
 import { css } from '@emotion/css';
 import { GeomapHoverPayload } from 'event';
 import { config } from '@grafana/runtime';
-import tinycolor from 'tinycolor2';
 
 // export interface Props {
 //   data?: DataFrame; // source data
@@ -35,11 +34,8 @@ export class DataHoverView extends PureComponent<DataHoverViewProps> {
       icon,
       stationLinks,
       tooltipImageUrl,
-      tooltipImageBackgroundColor,
-      tooltipImageBackgroundOpacity,
       onStationLinkClick,
     } = this.props;
-    const imageWrapStyle = getImageWrapStyle(tooltipImageBackgroundColor, tooltipImageBackgroundOpacity);
 
     if (!data || rowIndex == null) {
       return null;
@@ -64,7 +60,7 @@ export class DataHoverView extends PureComponent<DataHoverViewProps> {
             </div>
           ))}
           {tooltipImageUrl && (
-            <div className={this.style.imageWrap} style={imageWrapStyle}>
+            <div className={this.style.imageWrap}>
               <img className={this.style.image} src={tooltipImageUrl} alt="Location" />
             </div>
           )}
@@ -113,7 +109,7 @@ export class DataHoverView extends PureComponent<DataHoverViewProps> {
             </div>
           ))}
           {tooltipImageUrl && (
-            <div className={this.style.imageWrap} style={imageWrapStyle}>
+            <div className={this.style.imageWrap}>
               <img className={this.style.image} src={tooltipImageUrl} alt="Location" />
             </div>
           )}
@@ -149,7 +145,7 @@ export class DataHoverView extends PureComponent<DataHoverViewProps> {
             </div>
           ))}
           {tooltipImageUrl && (
-            <div className={this.style.imageWrap} style={imageWrapStyle}>
+            <div className={this.style.imageWrap}>
               <img className={this.style.image} src={tooltipImageUrl} alt="Location" />
             </div>
           )}
@@ -181,17 +177,6 @@ function fmt(field: Field, row: number): string {
     return formattedValueToString(field.display(v));
   }
   return `${v}`;
-}
-
-function getImageWrapStyle(color?: string, opacity?: number): React.CSSProperties | undefined {
-  if (!color) {
-    return undefined;
-  }
-
-  const alpha = Math.max(0, Math.min(1, opacity ?? 0));
-  return {
-    backgroundColor: tinycolor(color).setAlpha(alpha).toRgbString(),
-  };
 }
 
 const getStyles = (theme: GrafanaTheme2) => ({

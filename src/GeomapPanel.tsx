@@ -520,8 +520,6 @@ export class GeomapPanel extends Component<Props, State> {
     hoverPayload.stationLinks = undefined;
     hoverPayload.markerLabel = undefined;
     hoverPayload.tooltipImageUrl = undefined;
-    hoverPayload.tooltipImageBackgroundColor = undefined;
-    hoverPayload.tooltipImageBackgroundOpacity = undefined;
     let ttip: GeomapHoverPayload = {} as GeomapHoverPayload;
     const features: GeomapHoverFeature[] = [];
 
@@ -572,8 +570,6 @@ export class GeomapPanel extends Component<Props, State> {
           hoverPayload.rowIndex = ttip.rowIndex = props['rowIndex'];
           hoverPayload.stationLinks = getStationLinks(frame, props['rowIndex']);
           hoverPayload.markerLabel = props['markerLabel'];
-          hoverPayload.tooltipImageBackgroundColor = thisLayer.tooltipImageBackgroundColor;
-          hoverPayload.tooltipImageBackgroundOpacity = thisLayer.tooltipImageBackgroundOpacity;
 
           if (thisLayer.tooltipImageField && props['rowIndex'] != null) {
             const imageField = frame.fields.find((obj: { name: string }) => obj.name === thisLayer.tooltipImageField);

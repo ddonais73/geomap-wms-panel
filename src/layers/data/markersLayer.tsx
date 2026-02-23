@@ -144,8 +144,6 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
       titleField: options.titleField,
       timeField: options.timeField,
       tooltipImageField: options.tooltipImageField,
-      tooltipImageBackgroundColor: options.tooltipImageBackgroundColor,
-      tooltipImageBackgroundOpacity: options.tooltipImageBackgroundOpacity,
     } as BaseLayerOptions);
 
     function clusterStyle(customStyle: any, customValue: string) {
@@ -321,8 +319,6 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
           titleField: options.titleField,
           timeField: options.timeField,
           tooltipImageField: options.tooltipImageField,
-          tooltipImageBackgroundColor: options.tooltipImageBackgroundColor,
-          tooltipImageBackgroundOpacity: options.tooltipImageBackgroundOpacity,
           style: function (feature: RenderFeature | Feature<Geometry>) {
             let size = feature.get('features').length;
             if (size > 1) {
@@ -345,8 +341,6 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
           titleField: options.titleField,
           timeField: options.timeField,
           tooltipImageField: options.tooltipImageField,
-          tooltipImageBackgroundColor: options.tooltipImageBackgroundColor,
-          tooltipImageBackgroundOpacity: options.tooltipImageBackgroundOpacity,
         } as BaseLayerOptions);
 
     const vectorLayer = new layer.Group({

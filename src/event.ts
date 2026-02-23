@@ -20,8 +20,6 @@ export interface GeomapHoverPayload extends DataHoverPayload {
   stationLinks?: StationUrlLink[];
   markerLabel?: string;
   tooltipImageUrl?: string;
-  tooltipImageBackgroundColor?: string;
-  tooltipImageBackgroundOpacity?: number;
   pageX: number;
   pageY: number;
 }
