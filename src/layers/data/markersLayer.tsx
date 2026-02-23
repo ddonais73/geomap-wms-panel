@@ -1,6 +1,8 @@
 import React, { ReactNode } from 'react';
 import {
   PanelData,
+  Field,
+  FieldType,
   GrafanaTheme2,
   formattedValueToString,
   getScaleCalculator,
@@ -57,6 +59,7 @@ export interface MarkersConfig {
   clusterMinDistance?: number;
   clusterValue?: string;
   selectIcon?: any;
+  labelField?: string;
 }
 
 const defaultOptions: MarkersConfig = {
@@ -85,6 +88,7 @@ const defaultOptions: MarkersConfig = {
   clusterDistance: 20,
   clusterMinDistance: 0,
   clusterValue: 'size',
+  labelField: undefined,
 };
 
 export const MARKERS_LAYER_ID = 'markers';
@@ -139,6 +143,9 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
       icon: options.config?.selectIcon,
       titleField: options.titleField,
       timeField: options.timeField,
+      tooltipImageField: options.tooltipImageField,
+      tooltipImageBackgroundColor: options.tooltipImageBackgroundColor,
+      tooltipImageBackgroundOpacity: options.tooltipImageBackgroundOpacity,
     } as BaseLayerOptions);
 
     function clusterStyle(customStyle: any, customValue: string) {
@@ -248,6 +255,7 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
     function markerStyle(customStyle: any) {
       const enableShadow = options.config?.enableShadow ?? defaultOptions.enableShadow;
       const enableGradient = options.config?.enableGradient ?? defaultOptions.enableGradient;
+      const label = customStyle.label as string | undefined;
       let styles: Style[] = [];
       if (enableShadow) {
         styles.push(
@@ -278,6 +286,22 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
           }),
         })
       );
+
+      if (label) {
+        styles.push(
+          new Style({
+            text: new Text({
+              text: label,
+              font: '12px Verdana',
+              fill: new Fill({ color: '#111' }),
+              stroke: new Stroke({ color: '#fff', width: 3 }),
+              offsetY: -(Number(config.iconSize) + 18),
+              textAlign: 'center',
+            }),
+          })
+        );
+      }
+
       let image: Image = new FontSymbol({});
       if (enableShadow) {
         image = styles[1].getImage()!;
@@ -296,6 +320,9 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
           icon: options.config?.selectIcon,
           titleField: options.titleField,
           timeField: options.timeField,
+          tooltipImageField: options.tooltipImageField,
+          tooltipImageBackgroundColor: options.tooltipImageBackgroundColor,
+          tooltipImageBackgroundOpacity: options.tooltipImageBackgroundOpacity,
           style: function (feature: RenderFeature | Feature<Geometry>) {
             let size = feature.get('features').length;
             if (size > 1) {
@@ -317,6 +344,9 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
           icon: options.config?.selectIcon,
           titleField: options.titleField,
           timeField: options.timeField,
+          tooltipImageField: options.tooltipImageField,
+          tooltipImageBackgroundColor: options.tooltipImageBackgroundColor,
+          tooltipImageBackgroundOpacity: options.tooltipImageBackgroundOpacity,
         } as BaseLayerOptions);
 
     const vectorLayer = new layer.Group({
@@ -338,6 +368,27 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
       legend = <ObservablePropsWrapper watch={legendProps} initialSubProps={{}} child={MarkersLegend} />;
     }
     const shape = markerMakers.getIfExists(config.shape) ?? circleMarker;
+
+    const getFieldValueAt = (field: Field | undefined, rowIndex: number) => {
+      const values: any = field?.values;
+      if (!values) {
+        return undefined;
+      }
+
+      if (typeof values.get === 'function') {
+        return values.get(rowIndex);
+      }
+
+      if (Array.isArray(values)) {
+        return values[rowIndex];
+      }
+
+      if (Array.isArray(values.buffer)) {
+        return values.buffer[rowIndex];
+      }
+
+      return values[rowIndex];
+    };
 
     return {
       init: () => vectorLayer,
@@ -362,6 +413,7 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
               // console.log('Could not find locations', info.warning);
               continue; // ???
             }
+            const labelField = findField(frame, config.labelField);
 
             const colorDim = getColorDimension(frame, config.color, theme);
             const sizeDim = getScaledDimension(frame, config.size);
@@ -379,8 +431,23 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
               try {
                 const geoType = info.points[i].getType();
                 const geometry = new Feature(info.points[i]);
+                const locationLabelValue = getFieldValueAt(labelField, i);
+                const locationLabel = locationLabelValue != null ? String(locationLabelValue).trim() : undefined;
                 if (geoType === 'Point') {
-                  geometry.setStyle(shape!.make(color, fillColor, radius));
+                  const style = shape!.make(color, fillColor, radius);
+                  if (locationLabel) {
+                    style.setText(
+                      new Text({
+                        text: locationLabel,
+                        font: '12px Verdana',
+                        fill: new Fill({ color: '#111' }),
+                        stroke: new Stroke({ color: '#fff', width: 3 }),
+                        offsetY: -(radius + 14),
+                        textAlign: 'center',
+                      })
+                    );
+                  }
+                  geometry.setStyle(style);
                 } else {
                   const strokeSize = getScaledDimension(frame, config.geoJsonStrokeSize);
                   let style = new Style({
@@ -398,20 +465,22 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
                 if (showPin || cluster) {
                   const center = getCenter(info.points[i].getExtent());
                   const pin = new Feature(new Point(center));
-                  pin.setStyle(markerStyle({ color: color }));
-                  pin.set('style', { color: color, fillColor: fillColor });
+                  pin.setStyle(markerStyle({ color: color, label: locationLabel }));
+                  pin.set('style', { color: color, fillColor: fillColor, label: locationLabel });
                   if (cluster) {
                     pin.set('config', { frame: frame, config: config.color });
                   }
                   pin.setProperties({
                     frame,
                     rowIndex: i,
+                    markerLabel: locationLabel,
                   });
                   pinFeatures.push(pin);
                 } else {
                   geometry.setProperties({
                     frame,
                     rowIndex: i,
+                    markerLabel: locationLabel,
                   });
                 }
               } catch (error) {
@@ -514,6 +583,14 @@ export const markersLayer: ExtendMapLayerRegistryItem<MarkersConfig> = {
         name: 'Show pin',
         description: 'Show pin',
         defaultValue: defaultOptions.showPin,
+      })
+      .addFieldNamePicker({
+        path: 'config.labelField',
+        name: 'Marker label field',
+        settings: {
+          filter: (f) => f.type !== FieldType.other,
+          noFieldsMessage: 'No compatible fields found',
+        },
       })
       .addSelect({
         path: 'config.pinShape',

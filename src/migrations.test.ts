@@ -111,7 +111,7 @@ const simpleWorldmapConfig = {
 const PANEL_V1_WMS_NO_CONFIG_NO_PLUGIN_VERSION = JSON.parse(`
 {
   "id": 1,
-  "type": "felixrelleum-geomapwms-panel",
+  "type": "felixrelleum-geomapmultiurl-panel",
   "title": "New panel",
   "gridPos": {
     "x": 0,
@@ -183,7 +183,7 @@ const PANEL_V1_WMS_NO_CONFIG_NO_PLUGIN_VERSION = JSON.parse(`
 const PANEL_V1_WMS_WITH_CONFIG_NO_PLUGIN_VERSION = JSON.parse(`
 {
   "id": 1,
-  "type": "felixrelleum-geomapwms-panel",
+  "type": "felixrelleum-geomapmultiurl-panel",
   "title": "New panel",
   "gridPos": {
     "x": 0,
@@ -263,7 +263,7 @@ const PANEL_V1_WMS_WITH_CONFIG_NO_PLUGIN_VERSION = JSON.parse(`
 const PANEL_V1_NO_WMS_WITH_CONFIG_WITH_PLUGIN_VERSION = JSON.parse(`
 {
   "id": 1,
-  "type": "felixrelleum-geomapwms-panel",
+  "type": "felixrelleum-geomapmultiurl-panel",
   "title": "New panel",
   "gridPos": {
     "x": 0,
@@ -344,7 +344,7 @@ const PANEL_V1_NO_WMS_WITH_CONFIG_WITH_PLUGIN_VERSION = JSON.parse(`
 const PANEL_V1_WMS_WITH_CONFIG_WITH_PLUGIN_VERSION_2_LAYERS = JSON.parse(`
 {
   "id": 1,
-  "type": "felixrelleum-geomapwms-panel",
+  "type": "felixrelleum-geomapmultiurl-panel",
   "title": "New panel",
   "gridPos": {
     "x": 0,
@@ -426,7 +426,7 @@ const PANEL_V1_WMS_WITH_CONFIG_WITH_PLUGIN_VERSION_2_LAYERS = JSON.parse(`
 const PANEL_V2_WMS_WITH_CONFIG_WITH_PLUGIN_VERSION = JSON.parse(`
 {
   "id": 1,
-  "type": "felixrelleum-geomapwms-panel",
+  "type": "felixrelleum-geomapmultiurl-panel",
   "title": "New panel",
   "gridPos": {
     "x": 0,

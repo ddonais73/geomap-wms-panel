@@ -4,6 +4,7 @@ import { /*DataFrame,*/ Field, formattedValueToString, getFieldDisplayName, Graf
 import { css } from '@emotion/css';
 import { GeomapHoverPayload } from 'event';
 import { config } from '@grafana/runtime';
+import tinycolor from 'tinycolor2';
 
 // export interface Props {
 //   data?: DataFrame; // source data
@@ -16,11 +17,29 @@ import { config } from '@grafana/runtime';
 // }
 
 // export class DataHoverView extends PureComponent<Props> {
-export class DataHoverView extends PureComponent<GeomapHoverPayload> {
+interface DataHoverViewProps extends GeomapHoverPayload {
+  onStationLinkClick?: () => void;
+}
+
+export class DataHoverView extends PureComponent<DataHoverViewProps> {
   style = getStyles(config.theme2);
 
   render() {
-    const { data, rowIndex, columnIndex, propsToShow, timeField, titleField, icon } = this.props;
+    const {
+      data,
+      rowIndex,
+      columnIndex,
+      propsToShow,
+      timeField,
+      titleField,
+      icon,
+      stationLinks,
+      tooltipImageUrl,
+      tooltipImageBackgroundColor,
+      tooltipImageBackgroundOpacity,
+      onStationLinkClick,
+    } = this.props;
+    const imageWrapStyle = getImageWrapStyle(tooltipImageBackgroundColor, tooltipImageBackgroundOpacity);
 
     if (!data || rowIndex == null) {
       return null;
@@ -44,6 +63,27 @@ export class DataHoverView extends PureComponent<GeomapHoverPayload> {
               <span>{fmt(f, rowIndex)}</span>
             </div>
           ))}
+          {tooltipImageUrl && (
+            <div className={this.style.imageWrap} style={imageWrapStyle}>
+              <img className={this.style.image} src={tooltipImageUrl} alt="Location" />
+            </div>
+          )}
+          {Boolean(stationLinks?.length) && (
+            <div className={this.style.linksBlock}>
+              {stationLinks!.map((link, idx) => (
+                <a
+                  key={`${idx}/${rowIndex}/${link.url}`}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={this.style.link}
+                  onClick={() => onStationLinkClick?.()}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       );
     } else if (propsToShow) {
@@ -72,6 +112,27 @@ export class DataHoverView extends PureComponent<GeomapHoverPayload> {
               <h6>{fmt(f, rowIndex)}</h6>
             </div>
           ))}
+          {tooltipImageUrl && (
+            <div className={this.style.imageWrap} style={imageWrapStyle}>
+              <img className={this.style.image} src={tooltipImageUrl} alt="Location" />
+            </div>
+          )}
+          {Boolean(stationLinks?.length) && (
+            <div className={this.style.linksBlock}>
+              {stationLinks!.map((link, idx) => (
+                <a
+                  key={`${idx}/${rowIndex}/${link.url}`}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={this.style.link}
+                  onClick={() => onStationLinkClick?.()}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       );
     } else {
@@ -87,6 +148,27 @@ export class DataHoverView extends PureComponent<GeomapHoverPayload> {
               <h6>{fmt(f, rowIndex)}</h6>
             </div>
           ))}
+          {tooltipImageUrl && (
+            <div className={this.style.imageWrap} style={imageWrapStyle}>
+              <img className={this.style.image} src={tooltipImageUrl} alt="Location" />
+            </div>
+          )}
+          {Boolean(stationLinks?.length) && (
+            <div className={this.style.linksBlock}>
+              {stationLinks!.map((link, idx) => (
+                <a
+                  key={`${idx}/${rowIndex}/${link.url}`}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={this.style.link}
+                  onClick={() => onStationLinkClick?.()}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       );
     }
@@ -101,6 +183,17 @@ function fmt(field: Field, row: number): string {
   return `${v}`;
 }
 
+function getImageWrapStyle(color?: string, opacity?: number): React.CSSProperties | undefined {
+  if (!color) {
+    return undefined;
+  }
+
+  const alpha = Math.max(0, Math.min(1, opacity ?? 0));
+  return {
+    backgroundColor: tinycolor(color).setAlpha(alpha).toRgbString(),
+  };
+}
+
 const getStyles = (theme: GrafanaTheme2) => ({
   infoWrap: css`
     padding: 0px;
@@ -113,6 +206,25 @@ const getStyles = (theme: GrafanaTheme2) => ({
     padding: 2px;
     display: flex;
     justify-content: space-between;
+  `,
+  linksBlock: css`
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  `,
+  imageWrap: css`
+    margin-top: 8px;
+    text-align: center;
+  `,
+  image: css`
+    width: 128px;
+    height: 128px;
+    object-fit: contain;
+  `,
+  link: css`
+    text-decoration: underline;
+    word-break: break-word;
   `,
   highlight: css`
     background: ${theme.colors.action.hover};

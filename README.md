@@ -17,8 +17,8 @@
 > **Geomap WMS Panels of version 1.0.0, 1.0.1, 2.0.0 and 2.0.1** will experience these effects of wrong tooltips locations when using **Grafana >= 11.3.x**.
 >
 > **Available fixes:**
-> - Fix for v1.x: The Geomap WMS Panel plugin `v1.0.2` is now available in the official Grafana Plugin Catalog: https://grafana.com/grafana/plugins/felixrelleum-geomapwms-panel/
-> - Fix for v2.x: The Geomap WMS Panel plugin `v2.0.2` is now available in the official Grafana Plugin Catalog: https://grafana.com/grafana/plugins/felixrelleum-geomapwms-panel/
+> - Fix for v1.x: The Geomap WMS Panel plugin `v1.0.2` is now available in the official Grafana Plugin Catalog: https://grafana.com/grafana/plugins/felixrelleum-geomapmultiurl-panel/
+> - Fix for v2.x: The Geomap WMS Panel plugin `v2.0.2` is now available in the official Grafana Plugin Catalog: https://grafana.com/grafana/plugins/felixrelleum-geomapmultiurl-panel/
 
 <br>
 <h1>
@@ -34,6 +34,11 @@ Geomap WMS Panel Plugin
 ## About
 This plugin evolved from the [Orchestra Cities Map Panel-Plugins](https://github.com/orchestracities/map-panel). It extends the original version by the functionality of the intergration of an [OGC Web Map Service](https://www.ogc.org/standard/wms/) (**WMS version 1.3.0**) as a base map layer. Additionally the plugin ships with an interactive filter tool to query data by spatial relations.
 Also a minimal implementation of datalinks is provided to update dashboard variables by clicking on a map feature.
+
+## Credits / Attribution
+- Original project: [Orchestra Cities Map Panel](https://github.com/orchestracities/map-panel)
+- Original code baseline used in this repository: [map-panel@c0d3a19](https://github.com/orchestracities/map-panel/tree/c0d3a19ce910b9c3ab8416f5a609afb10ff8c0fe)
+- Thanks to the Orchestra Cities maintainers and contributors for the foundational implementation.
 
 Due to Grafana Labs' [plugin guidelines](https://grafana.com/legal/plugins/#plugin-publishing-and-signing-criteria) it was necessary to remove the Nextzen basemap layer, since it required to store the API key in the config, which should be avoided in panel plugins.
 
@@ -275,8 +280,8 @@ npm run dev
 ```
 
 ## Deploy the (unsigned) plugin to the docker container (for debugging)
-The packed plugin (either [production build](#building-the-plugin) or [development build](#building-the-plugin-for-developmentdebugging)) is found in the output folder `./felixrelleum-geomapwms-panel`.
-To allow grafana to load an _unsigned_ plugin the container environment variable `GF_PLUGINS_ALLOW_UNSIGNED_PLUGINS=<comma separated list of plugin-ids>` must be set to "felixrelleum-geomapwms-panel".
+The packed plugin (either [production build](#building-the-plugin) or [development build](#building-the-plugin-for-developmentdebugging)) is found in the output folder `./felixrelleum-geomapmultiurl-panel`.
+To allow grafana to load an _unsigned_ plugin the container environment variable `GF_PLUGINS_ALLOW_UNSIGNED_PLUGINS=<comma separated list of plugin-ids>` must be set to "felixrelleum-geomapmultiurl-panel".
 Additionally it is required to configure a _bind mount_ of the _plugins_ container directory to the host filesystem where the bundled Geomap WMS Panel Plugin is located.
 
 **Shortcut:**

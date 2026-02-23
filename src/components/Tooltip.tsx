@@ -1,6 +1,6 @@
 import { GeomapHoverPayload } from "event";
 import { DataHoverView } from "./DataHoverView";
-import React, { memo } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { ClipboardButton, useTheme2, VizTooltipContainer } from "@grafana/ui";
 import { css } from "@emotion/css";
 import { computeTooltipStyle, convertMapViewExtent2LonLat, copy2ClipBoardDataAsJSON, MapViewExtentLonLat, TooltipStyle } from "./tootltipUtils";
@@ -15,24 +15,59 @@ type Props = {
         extent: number[];
         projection: string;
     }
-    mapSize: Size | undefined
+    mapSize: Size | undefined;
+    onClose?: () => void;
 };
 
-export const Tooltip = memo(function Tooltip({tooltipData, mapExtent, mapSize}: Props) {
+export const Tooltip = memo(function Tooltip({tooltipData, mapExtent, mapSize, onClose}: Props) {
     const theme = useTheme2();
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const canRenderTooltip = Boolean(
+        tooltipData.ttip &&
+        tooltipData.ttip.data &&
+        mapExtent &&
+        mapSize &&
+        mapSize.length === 2 &&
+        mapExtent.extent.length === 4 &&
+        mapExtent.projection.length > 0 &&
+        tooltipData.ttip.point &&
+        tooltipData.ttip.point.lat &&
+        tooltipData.ttip.point.lon
+    );
 
-    if (!tooltipData.ttip || !tooltipData.ttip.data || !mapExtent || !mapSize || mapSize.length !== 2
-        || mapExtent.extent.length !== 4
-        || mapExtent.projection.length === 0
-        || !tooltipData.ttip.point || !tooltipData.ttip.point.lat || !tooltipData.ttip.point.lon
-    ) {
+    useEffect(() => {
+        if (!tooltipData.fixedFlag || !tooltipData.ttip?.data || !onClose) {
+            return;
+        }
+
+        const handleDocumentMouseDown = (event: MouseEvent) => {
+            const target = event.target as Node | null;
+            if (!target) {
+                return;
+            }
+
+            if (containerRef.current?.contains(target)) {
+                return;
+            }
+
+            onClose();
+        };
+
+        document.addEventListener('mousedown', handleDocumentMouseDown, true);
+        return () => document.removeEventListener('mousedown', handleDocumentMouseDown, true);
+    }, [tooltipData.fixedFlag, tooltipData.ttip?.data, onClose]);
+
+    if (!canRenderTooltip) {
         return null;
     }
-    const datahoverview = (<DataHoverView {...tooltipData.ttip} />);
+    const ttip = tooltipData.ttip!;
+    const safeMapExtent = mapExtent!;
+    const safeMapSize = mapSize!;
+    const datahoverview = (<DataHoverView {...ttip} onStationLinkClick={onClose} />);
 
     let extentLonLat: MapViewExtentLonLat;
     try {
-          extentLonLat = convertMapViewExtent2LonLat(mapExtent.extent, mapExtent.projection);
+            extentLonLat = convertMapViewExtent2LonLat(safeMapExtent.extent, safeMapExtent.projection);
     } catch (error) {
         return null;
     }
@@ -40,9 +75,9 @@ export const Tooltip = memo(function Tooltip({tooltipData, mapExtent, mapSize}: 
     let vizTooltipStyle: TooltipStyle;
     try {
         vizTooltipStyle = computeTooltipStyle(
-            (tooltipData.ttip.point as unknown) as { lon: number; lat: number; },
+            (ttip.point as unknown) as { lon: number; lat: number; },
             extentLonLat,
-            mapSize
+            safeMapSize
         );
     } catch (error) {
         return null;
@@ -59,40 +94,24 @@ export const Tooltip = memo(function Tooltip({tooltipData, mapExtent, mapSize}: 
     }
 
     return (
-        //   <Portal> // is the grafana portal element: https://github.com/grafana/grafana/blob/8b25822723357d32b413d950035a2a304d23b5ab/packages/grafana-ui/src/components/Portal/Portal.tsx
+        <div ref={containerRef}>
             <VizTooltipContainer
             className={styles.viz}
             style={vizTooltipStyle}
-            position={{ x: tooltipData.ttip.pageX, y: tooltipData.ttip.pageY }}
+            position={{ x: ttip.pageX, y: ttip.pageY }}
             offset={{ x: 10, y: 10 }}
             allowPointerEvents
             >
             {datahoverview}
-            {(tooltipData.fixedFlag && (tooltipData.ttip?.propsToShow ?? []).length > 0) && (
-                    // <div>
-                    //     <i className="bi bi-copy"></i>
-                    // </div>
-                    // <IconButton aria-label="copy feature data to clipboard"
-                    // variant="secondary" size="sm" name="copy" tooltip={"Copy feature data to clipboard"}
-                    // onClick={()=>{
-                    //     // TODO: 
-                    //     navigator.clipboard.writeText("newClip").then(
-                    //         () => {
-                    //         /* clipboard successfully set */
-                    //         },
-                    //         () => {
-                    //         /* clipboard write failed */
-                    //         },
-                    //     );
-                    // }}></IconButton>
+            {(tooltipData.fixedFlag && (ttip.propsToShow ?? []).length > 0) && (
                     <ClipboardButton icon="copy" variant="secondary" size="sm"
-                    getText={() => copy2ClipBoardDataAsJSON(tooltipData.ttip!)} fullWidth={true}>
+                    getText={() => copy2ClipBoardDataAsJSON(ttip)} fullWidth={true}>
                         Copy data
                     </ClipboardButton>
                 )
             }
             </VizTooltipContainer>
-        //   </Portal>
+        </div>
     );
 }, (prevProps, nextProps) => {
     const changed = Object.is(prevProps.tooltipData.ttip?.data, nextProps.tooltipData.ttip?.data)

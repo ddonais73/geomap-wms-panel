@@ -64,6 +64,7 @@ import { fontmaki } from 'styles/fontmaki/fontmaki';
 import { fontmaki2 } from 'styles/fontmaki/fontmaki2';
 import { getLayersExtent } from 'utils/getLayersExtent';
 import { Tooltip } from 'components/Tooltip';
+import { getStationLinks } from 'utils/stationLinks';
 // import LayerGroup from 'ol/layer/Group';
 
 export interface MapLayerState {
@@ -123,6 +124,8 @@ export class GeomapPanel extends Component<Props, State> {
   private pointerMoveListenerEnabled = true;
   private dataHoverTimeout: ReturnType<typeof setTimeout> | undefined;
   private tooltipFixed = false;
+
+  isClickTooltipMode = () => this.props.options.controls?.tooltipOnClick === true;
 
   constructor(props: Props/*, state: State*/) {
     super(props);
@@ -450,10 +453,12 @@ export class GeomapPanel extends Component<Props, State> {
       return;
     }
 
-    // If there are no data links do nothing
-    if (this.props.fieldConfig.defaults.links === undefined || 
-      this.props.fieldConfig!.defaults!.links!.length === 0) {
-      return;      
+    const hasDataLinks = this.props.fieldConfig.defaults.links !== undefined &&
+      this.props.fieldConfig!.defaults!.links!.length > 0;
+    const isClickTooltipMode = this.isClickTooltipMode();
+
+    if (!hasDataLinks && !isClickTooltipMode) {
+      return;
     }
 
     // For now only take the first entry of the data links
@@ -462,15 +467,37 @@ export class GeomapPanel extends Component<Props, State> {
     // this.currentFieldName =
 
     // Call pointerMoveListener to process event since data select event is based on datahover event
-    this.pointerMoveListener(evt);
+    this.pointerMoveListener(evt, true);
+
+    if (this.hoverPayload.data && this.hoverPayload.rowIndex != null) {
+      clearTimeout(this.dataHoverTimeout);
+      this.pointerMoveListenerEnabled = false;
+      this.tooltipFixed = true;
+      this.setState({ ttip: { ...this.hoverPayload } });
+
+      if (this.map) {
+        this.map.getTargetElement().style.cursor = '';
+      }
+    }
 
     // Push data select event
-    this.props.eventBus.publish({ ...this.hoverEvent, panelOrigin: this, type: "data-select" });
+    if (hasDataLinks) {
+      this.props.eventBus.publish({ ...this.hoverEvent, panelOrigin: this, type: "data-select" });
+    }
   }
 
 
-  pointerMoveListener = (evt: MapBrowserEvent) => {
-    if (!this.map || !this.pointerMoveListenerEnabled) {
+  pointerMoveListener = (evt: MapBrowserEvent, forceTooltip = false) => {
+    if (!this.map || (!this.pointerMoveListenerEnabled && !forceTooltip)) {
+      return;
+    }
+
+    const mouse = evt.originalEvent as any;
+    const pixel = this.map.getEventPixel(mouse);
+
+    if (this.isClickTooltipMode() && !forceTooltip) {
+      const feature = this.map.forEachFeatureAtPixel(pixel, (f) => f);
+      this.map.getTargetElement().style.cursor = feature ? 'pointer' : '';
       return;
     }
 
@@ -478,8 +505,6 @@ export class GeomapPanel extends Component<Props, State> {
     clearTimeout(this.dataHoverTimeout);
     this.tooltipFixed = false;
 
-    const mouse = evt.originalEvent as any;
-    const pixel = this.map.getEventPixel(mouse);
     const hover = toLonLat(this.map.getCoordinateFromPixel(pixel));
 
     const { hoverPayload } = this;
@@ -492,8 +517,31 @@ export class GeomapPanel extends Component<Props, State> {
     hoverPayload.data = undefined;
     hoverPayload.rowIndex = undefined;
     hoverPayload.propsToShow = undefined;
+    hoverPayload.stationLinks = undefined;
+    hoverPayload.markerLabel = undefined;
+    hoverPayload.tooltipImageUrl = undefined;
+    hoverPayload.tooltipImageBackgroundColor = undefined;
+    hoverPayload.tooltipImageBackgroundOpacity = undefined;
     let ttip: GeomapHoverPayload = {} as GeomapHoverPayload;
     const features: GeomapHoverFeature[] = [];
+
+    const getFieldValueAt = (field: any, rowIndex: number) => {
+      const values: any = field?.values;
+      if (!values) {
+        return undefined;
+      }
+      if (typeof values.get === 'function') {
+        return values.get(rowIndex);
+      }
+      if (Array.isArray(values)) {
+        return values[rowIndex];
+      }
+      if (Array.isArray(values.buffer)) {
+        return values.buffer[rowIndex];
+      }
+      return values[rowIndex];
+    };
+
     this.map.forEachFeatureAtPixel(pixel, (feature, layer, geo) => {
       let propsToShow = [];
       if (!hoverPayload.data) {
@@ -522,6 +570,19 @@ export class GeomapPanel extends Component<Props, State> {
             return obj.name === thisLayer.timeField;
           });
           hoverPayload.rowIndex = ttip.rowIndex = props['rowIndex'];
+          hoverPayload.stationLinks = getStationLinks(frame, props['rowIndex']);
+          hoverPayload.markerLabel = props['markerLabel'];
+          hoverPayload.tooltipImageBackgroundColor = thisLayer.tooltipImageBackgroundColor;
+          hoverPayload.tooltipImageBackgroundOpacity = thisLayer.tooltipImageBackgroundOpacity;
+
+          if (thisLayer.tooltipImageField && props['rowIndex'] != null) {
+            const imageField = frame.fields.find((obj: { name: string }) => obj.name === thisLayer.tooltipImageField);
+            const imageValue = getFieldValueAt(imageField, props['rowIndex']);
+            if (imageValue != null) {
+              const imageUrl = String(imageValue).trim();
+              hoverPayload.tooltipImageUrl = imageUrl.length > 0 ? imageUrl : undefined;
+            }
+          }
         }
       }
       features.push({ feature, layer, geo });
@@ -835,6 +896,9 @@ export class GeomapPanel extends Component<Props, State> {
   };
 
   tooltipPopupClosed = () => {
+    clearTimeout(this.dataHoverTimeout);
+    this.pointerMoveListenerEnabled = true;
+    this.tooltipFixed = false;
     this.setState({ ttipOpen: false, ttip: undefined });
   };
 
@@ -852,19 +916,13 @@ export class GeomapPanel extends Component<Props, State> {
     return (
       <>
         <div className={cx(fontmaki, fontmaki2, bootstrapIcons, olStyles, olExtStyles, this.globalCSS)} style={{height: "100%"}}>
-          <div className={styles.wrap} data-testid={testIds.geomapPanel.container} onMouseLeave={() => {
-            // Reset any tooltip related properties
-            this.clearTooltip();
-            clearTimeout(this.dataHoverTimeout);
-            this.tooltipFixed = true;
-            this.pointerMoveListenerEnabled = true;
-            }}>
+          <div className={styles.wrap} data-testid={testIds.geomapPanel.container}>
             <div className={styles.map} ref={this.initMapRef as (instance: HTMLDivElement | null) => void}></div>
             <GeomapOverlay bottomLeft={bottomLeft} topRight2={topRight2} />
             <Tooltip tooltipData={{ttip: ttip, fixedFlag: this.tooltipFixed}} mapExtent={{
             extent: this.map?.getView().calculateExtent(this.map?.getSize()) as number[] ?? [], 
             projection: this.map?.getView().getProjection().getCode() ?? ""
-            }} mapSize={this.map?.getSize()}></Tooltip>
+            }} mapSize={this.map?.getSize()} onClose={this.tooltipPopupClosed}></Tooltip>
           </div>
           {/* <Tooltip ttip={ttip} mapExtent={{
             extent: this.map?.getView().calculateExtent(this.map?.getSize()) as number[] ?? [], 

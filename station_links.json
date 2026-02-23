@@ -1,0 +1,221 @@
+{
+  "site": [
+    {
+      "location": "Halifax",
+      "latitude": 44.6488,
+      "longitude": -63.5752,
+      "urls": [
+        {
+          "name": "Halifax – Studio",
+          "url": "https://acadiaengineering.ca/d/3e022446-ab7c-4785-afcd-6769fd235191/ckhy-ckhz-halifax-studio"
+        },
+        {
+          "name": "CKHY / CKHZ Washmill Lake",
+          "url": "https://acadiaengineering.ca/d/acsfn9k/ckhy-ckhz-halifax-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "Bridgewater",
+      "latitude": 44.378,
+      "longitude": -64.518,
+      "urls": [
+        {
+          "name": "Bridgewater – Studio",
+          "url": "https://acadiaengineering.ca/d/bb25875e-e91c-4acb-9923-e3e514ac2e9b/ckbw-cjhk-bridgewater-studio"
+        },
+        {
+          "name": "CJHK / CKBW Baker's Settlement",
+          "url": "https://acadiaengineering.ca/d/ac2h8cx/ckbw-cjhk-bridgewater-tx-site"
+        },
+        {
+          "name": "CKBW Liverpool",
+          "url": "https://acadiaengineering.ca/d/acxfbrj/ckbw-liverpool-tx-site"
+        },
+        {
+          "name": "CKBW Shelburne",
+          "url": "https://acadiaengineering.ca/d/acvm7ch/ckbw-shelburne-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "Yarmouth",
+      "latitude": 43.837,
+      "longitude": -66.1174,
+      "urls": [
+        {
+          "name": "Yarmouth – Studio",
+          "url": "https://acadiaengineering.ca/d/cad47346-1d84-4fc7-a813-2e7ab4cdc0c4/cjls-yarmouth-studio"
+        },
+        {
+          "name": "CJLS Yarmouth",
+          "url": "https://acadiaengineering.ca/d/ac6xd52/cjls-yarmouth-tx-site"
+        },
+        {
+          "name": "CJLS Barrington",
+          "url": "https://acadiaengineering.ca/d/97540ccf-6b8f-4888-9e7b-f262fe533fc2/cjls-barrington-tx-site"
+        },
+        {
+          "name": "CJLS New Tusket",
+          "url": "https://acadiaengineering.ca/d/acfvvng/cjls-new-tusket-tx-site"
+        },
+        {
+          "name": "CJLS Tusket",
+          "url": "https://acadiaengineering.ca/d/achvd4w/cjls-tusket-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "Port Hawkesbury",
+      "latitude": 45.6167,
+      "longitude": -61.35,
+      "urls": [
+        {
+          "name": "Port Hawkesbury – Studio",
+          "url": "https://acadiaengineering.ca/d/e61b2f10-fa50-48b9-bdb2-205066ca2f26/cigo-port-hawkesbury-studio"
+        },
+        {
+          "name": "CIGO Aulds Cove",
+          "url": "https://acadiaengineering.ca/d/f6590cfe-2c60-4b7b-8936-748b39352a3b/cigo-port-hawkesbury-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "Saint John",
+      "latitude": 45.2733,
+      "longitude": -66.0633,
+      "urls": [
+        {
+          "name": "Saint John – Studio",
+          "url": "https://acadiaengineering.ca/d/0366fd8a-77de-4a80-a06a-5ec98ffbe4f0/chsj-chwv-chtd-saint-john-studio"
+        },
+        {
+          "name": "CHSJ / CHWV Mount Champlain",
+          "url": "https://acadiaengineering.ca/d/8a22de32-17a9-4a94-9081-d8570f6e3610/chsj-chwv-saint-john-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "St. Stephen",
+      "latitude": 45.194,
+      "longitude": -67.275,
+      "urls": [
+        {
+          "name": "CHTD Greenlaw Mountain",
+          "url": "https://acadiaengineering.ca/d/1177a87e-b2d5-42d3-9892-dfa0a25b0e7f/chtd-st-stephen-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "Moncton",
+      "latitude": 46.0878,
+      "longitude": -64.7782,
+      "urls": [
+        {
+          "name": "Moncton – Studio",
+          "url": "https://acadiaengineering.ca/d/063fcbca-f590-4533-a9ba-d224d0712166/ckni-moncton-studio"
+        },
+        {
+          "name": "CKNI Lutes Mountain",
+          "url": "https://acadiaengineering.ca/d/1e338844-14b7-4618-9646-2028997eb40a/ckni-moncton-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "Thunder Bay",
+      "latitude": 48.3809,
+      "longitude": -89.2477,
+      "urls": [
+        {
+          "name": "Thunder Bay – Studio",
+          "url": "https://acadiaengineering.ca/d/d97e762c-368f-4d48-b1bb-f0c0ab1784f9/cjuk-cktg-thunder-bay-studio"
+        },
+        {
+          "name": "CJUK Waverley Towers",
+          "url": "https://acadiaengineering.ca/d/c3a088aa-0142-4d2f-9ad8-6096050f12ea/cjuk-thunder-bay-tx-site"
+        },
+        {
+          "name": "CKTG Mount Baldy",
+          "url": "https://acadiaengineering.ca/d/c3a088aa-0142-4d2f-9ad8-6096050f12ea/cjuk-thunder-bay-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "Dryden",
+      "latitude": 49.783,
+      "longitude": -92.837,
+      "urls": [
+        {
+          "name": "Dryden – Studio",
+          "url": "https://acadiaengineering.ca/d/3e105633-c8ad-4af7-91aa-0fc879ead0ab/ckdr-dryden-studio"
+        },
+        {
+          "name": "CKDR Dryden",
+          "url": "https://acadiaengineering.ca/d/1ca5933a-9696-4ad9-86f9-44a713a32d18/ckdr-dryden-tx-site"
+        },
+        {
+          "name": "CKDR Ear Falls",
+          "url": "https://acadiaengineering.ca/d/626fbda2-ae57-4f85-a0ca-721067491fd2/ckdr-ear-falls-tx-site"
+        },
+        {
+          "name": "CKDR Hudson",
+          "url": "https://acadiaengineering.ca/d/1f8eaeeb-c883-40c1-996f-d046b07e856d/ckdr-hudson-tx-site"
+        },
+        {
+          "name": "CKDR Ignace",
+          "url": "https://acadiaengineering.ca/d/f0ba60aa-3dd1-4d6b-909c-3c025d5c60eb/ckdr-ignace-tx-site"
+        },
+        {
+          "name": "CKDR Red Lake",
+          "url": "https://acadiaengineering.ca/d/502a8075-3d32-4f91-9c15-3f0fabdc3512/ckdr-red-lake-tx-site"
+        },
+        {
+          "name": "CKDR Sioux Lookout",
+          "url": "https://acadiaengineering.ca/d/1da845a7-5f77-4336-a056-6e28ce2ca485/ckdr-sioux-lookout-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "Kenora",
+      "latitude": 49.767,
+      "longitude": -94.489,
+      "urls": [
+        {
+          "name": "CJRL / CKQV / CFOB – Kenora Studio",
+          "url": "https://acadiaengineering.ca/d/eea61982-e641-4fce-8080-1832542fff49/cjrl-ckqv-cfob-kenora-studio"
+        },
+        {
+          "name": "CJRL Kenora",
+          "url": "https://acadiaengineering.ca/d/ec0948c5-b507-41c3-9ee5-dc53f268e85f/cjrl-kenora-tx-site"
+        },
+        {
+          "name": "CKQV Kenora",
+          "url": "https://acadiaengineering.ca/d/61729832-8057-406b-8270-5885880e03a2/ckqv-kenora-tx-site"
+        },
+        {
+          "name": "CKQV Sioux Lookout",
+          "url": "https://acadiaengineering.ca/d/4c7d3848-9092-46d6-9b06-71c6e499f49c/ckqv-sioux-lookout-tx-site"
+        },
+        {
+          "name": "CKQV Vermilion Bay",
+          "url": "https://acadiaengineering.ca/d/95c84f99-3132-4911-993d-7217e4dadb30/ckqv-vermilion-bay-tx-site"
+        }
+      ]
+    },
+    {
+      "location": "Fort Frances",
+      "latitude": 48.615,
+      "longitude": -93.4,
+      "urls": [
+        {
+          "name": "CFOB Fort Frances",
+          "url": "https://acadiaengineering.ca/d/8d7e8bb1-39e7-4616-abf3-79a0c5e76d65/cfob-fort-frances-tx-site"
+        },
+        {
+          "name": "CFOB Atikokan",
+          "url": "https://acadiaengineering.ca/d/1836b0f9-ade9-4a3d-b355-874e34436d8c/cfob-atikokan-tx-site"
+        }
+      ]
+    }
+  ]
+}

@@ -150,7 +150,7 @@
           }
         }
       ],
-      "type": "felixrelleum-geomapwms-panel"
+      "type": "felixrelleum-geomapmultiurl-panel"
     },
     {
       "fieldConfig": {
@@ -463,7 +463,7 @@
           }
         }
       ],
-      "type": "felixrelleum-geomapwms-panel"
+      "type": "felixrelleum-geomapmultiurl-panel"
     },
     {
       "datasource": {
@@ -728,7 +728,7 @@
           }
         }
       ],
-      "type": "felixrelleum-geomapwms-panel"
+      "type": "felixrelleum-geomapmultiurl-panel"
     },
     {
       "datasource": {
@@ -972,7 +972,7 @@
           }
         }
       ],
-      "type": "felixrelleum-geomapwms-panel"
+      "type": "felixrelleum-geomapmultiurl-panel"
     },
     {
       "datasource": {
@@ -1227,7 +1227,7 @@
         }
       ],
       "title": "Geomap WMS Panel - WMTS",
-      "type": "felixrelleum-geomapwms-panel"
+      "type": "felixrelleum-geomapmultiurl-panel"
     },
     {
       "datasource": {
@@ -1503,7 +1503,7 @@
         }
       ],
       "title": "Geomap WMS Panel WMTS w custom parameter",
-      "type": "felixrelleum-geomapwms-panel"
+      "type": "felixrelleum-geomapmultiurl-panel"
     }
   ],
   "preload": false,

@@ -100,6 +100,13 @@ export const plugin = new PanelPlugin<GeomapPanelOptions>(GeomapPanel)
       })
       .addBooleanSwitch({
         category,
+        path: 'controls.tooltipOnClick',
+        name: 'Tooltip requires click',
+        description: 'When enabled, tooltips are shown only when clicking a marker.',
+        defaultValue: false,
+      })
+      .addBooleanSwitch({
+        category,
         path: 'controls.showSpatialFilter',
         name: 'Show spatial filter tool',
         description: 'Show tool for interactive spatial filtering',

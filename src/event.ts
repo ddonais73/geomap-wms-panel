@@ -3,6 +3,7 @@ import { SimpleGeometry } from 'ol/geom';
 import { Layer } from 'ol/layer';
 import { DataHoverPayload } from '@grafana/data';
 import { Source } from 'ol/source';
+import { StationUrlLink } from 'utils/stationLinks';
 
 export interface GeomapHoverFeature {
   feature: FeatureLike;
@@ -16,6 +17,11 @@ export interface GeomapHoverPayload extends DataHoverPayload {
   titleField?: any[]; // string
   timeField?: any[]; // string
   icon?: string;
+  stationLinks?: StationUrlLink[];
+  markerLabel?: string;
+  tooltipImageUrl?: string;
+  tooltipImageBackgroundColor?: string;
+  tooltipImageBackgroundOpacity?: number;
   pageX: number;
   pageY: number;
 }

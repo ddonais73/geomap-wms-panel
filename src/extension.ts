@@ -49,6 +49,9 @@ export interface ExtendMapLayerOptions<TConfig = any> {
   displayProperties?: string[];
   titleField?: string;
   timeField?: string;
+  tooltipImageField?: string;
+  tooltipImageBackgroundColor?: string;
+  tooltipImageBackgroundOpacity?: number;
   visible?: boolean;
   enabledForDataLinks?: boolean;
   basemapUsedAsMapLayer?: boolean;

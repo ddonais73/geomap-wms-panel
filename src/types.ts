@@ -22,6 +22,9 @@ export interface ControlsOptions {
   // Show debug
   showDebug?: boolean;
 
+  // Require click on marker to show tooltip instead of hover
+  tooltipOnClick?: boolean;
+
   // Custom control: spatial filter
   showSpatialFilter?: boolean
 

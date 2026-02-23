@@ -1,2 +1,2 @@
 export const SOURCE_DIR = 'src';
-export const DIST_DIR = 'felixrelleum-geomapwms-panel';
+export const DIST_DIR = 'felixrelleum-geomapmultiurl-panel';

@@ -149,6 +149,34 @@ export const LayerEditor: FC<LayerEditorProps> = ({ options, onChange, data, fil
             noFieldsMessage: 'No time fields found',
           },
         })
+        .addFieldNamePicker({
+          path: 'tooltipImageField',
+          name: 'Pop up image',
+          settings: {
+            filter: (f: Field) => f.type === FieldType.string,
+            noFieldsMessage: 'No string fields found',
+          },
+        })
+        .addColorPicker({
+          path: 'tooltipImageBackgroundColor',
+          name: 'Pop up image background color',
+          defaultValue: '#ffffff',
+          showIf: (opts) => Boolean(opts.tooltipImageField),
+          settings: {
+            allowCustom: true,
+          },
+        })
+        .addSliderInput({
+          path: 'tooltipImageBackgroundOpacity',
+          name: 'Pop up image background opacity',
+          showIf: (opts) => Boolean(opts.tooltipImageField),
+          settings: {
+            min: 0,
+            max: 1,
+            step: 0.1,
+          },
+          defaultValue: 0,
+        })
         .addMultiSelect({
           path: 'displayProperties',
           name: 'Properties',
