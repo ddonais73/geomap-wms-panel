@@ -18,10 +18,32 @@ import { config } from '@grafana/runtime';
 // export class DataHoverView extends PureComponent<Props> {
 interface DataHoverViewProps extends GeomapHoverPayload {
   onStationLinkClick?: () => void;
+  openLinksInNewTab?: boolean;
 }
 
 export class DataHoverView extends PureComponent<DataHoverViewProps> {
   style = getStyles(config.theme2);
+
+  navigateStationLink = (event: React.MouseEvent<HTMLAnchorElement>, url: string) => {
+    event.preventDefault();
+    this.props.onStationLinkClick?.();
+    const openLinksInNewTab = this.props.openLinksInNewTab === true;
+
+    try {
+      const parsedUrl = new URL(url, window.location.origin);
+      if (openLinksInNewTab) {
+        window.open(parsedUrl.toString(), '_blank', 'noopener,noreferrer');
+      } else {
+        window.location.assign(parsedUrl.toString());
+      }
+    } catch (error) {
+      if (openLinksInNewTab) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } else {
+        window.location.assign(url);
+      }
+    }
+  };
 
   render() {
     const {
@@ -34,7 +56,6 @@ export class DataHoverView extends PureComponent<DataHoverViewProps> {
       icon,
       stationLinks,
       tooltipImageUrl,
-      onStationLinkClick,
     } = this.props;
 
     if (!data || rowIndex == null) {
@@ -70,10 +91,8 @@ export class DataHoverView extends PureComponent<DataHoverViewProps> {
                 <a
                   key={`${idx}/${rowIndex}/${link.url}`}
                   href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className={this.style.link}
-                  onClick={() => onStationLinkClick?.()}
+                  onClick={(event) => this.navigateStationLink(event, link.url)}
                 >
                   {link.name}
                 </a>
@@ -119,10 +138,8 @@ export class DataHoverView extends PureComponent<DataHoverViewProps> {
                 <a
                   key={`${idx}/${rowIndex}/${link.url}`}
                   href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className={this.style.link}
-                  onClick={() => onStationLinkClick?.()}
+                  onClick={(event) => this.navigateStationLink(event, link.url)}
                 >
                   {link.name}
                 </a>
@@ -155,10 +172,8 @@ export class DataHoverView extends PureComponent<DataHoverViewProps> {
                 <a
                   key={`${idx}/${rowIndex}/${link.url}`}
                   href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className={this.style.link}
-                  onClick={() => onStationLinkClick?.()}
+                  onClick={(event) => this.navigateStationLink(event, link.url)}
                 >
                   {link.name}
                 </a>

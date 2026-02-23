@@ -17,9 +17,10 @@ type Props = {
     }
     mapSize: Size | undefined;
     onClose?: () => void;
+    openLinksInNewTab?: boolean;
 };
 
-export const Tooltip = memo(function Tooltip({tooltipData, mapExtent, mapSize, onClose}: Props) {
+export const Tooltip = memo(function Tooltip({tooltipData, mapExtent, mapSize, onClose, openLinksInNewTab = false}: Props) {
     const theme = useTheme2();
     const containerRef = useRef<HTMLDivElement | null>(null);
     const canRenderTooltip = Boolean(
@@ -63,7 +64,7 @@ export const Tooltip = memo(function Tooltip({tooltipData, mapExtent, mapSize, o
     const ttip = tooltipData.ttip!;
     const safeMapExtent = mapExtent!;
     const safeMapSize = mapSize!;
-    const datahoverview = (<DataHoverView {...ttip} onStationLinkClick={onClose} />);
+    const datahoverview = (<DataHoverView {...ttip} onStationLinkClick={onClose} openLinksInNewTab={openLinksInNewTab} />);
 
     let extentLonLat: MapViewExtentLonLat;
     try {
@@ -116,8 +117,8 @@ export const Tooltip = memo(function Tooltip({tooltipData, mapExtent, mapSize, o
 }, (prevProps, nextProps) => {
     const changed = Object.is(prevProps.tooltipData.ttip?.data, nextProps.tooltipData.ttip?.data)
     && Object.is(prevProps.tooltipData.ttip?.features, nextProps.tooltipData.ttip?.features)
-    //eslint-disable-next-line
-    && (nextProps.tooltipData.fixedFlag == prevProps.tooltipData.fixedFlag);
+    && (nextProps.tooltipData.fixedFlag === prevProps.tooltipData.fixedFlag)
+    && (nextProps.openLinksInNewTab === prevProps.openLinksInNewTab);
     return changed;
 });
 

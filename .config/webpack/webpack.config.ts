@@ -128,6 +128,7 @@ const config = async (env): Promise<Configuration> => ({
     // Replace current plugin version in migration.ts
     new webpack.DefinePlugin({
       PLUGIN_VERSION: JSON.stringify(getPackageJson().version),
+      PLUGIN_BUILD_DATETIME: JSON.stringify(new Date().toISOString()),
     }),
     new CopyWebpackPlugin({
       patterns: [

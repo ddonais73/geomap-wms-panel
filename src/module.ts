@@ -10,6 +10,9 @@ import { OverviewMapEditor } from 'editor/OverviewMapEditor';
 import { initPluginTranslations } from '@grafana/i18n';
 import pluginJson from 'plugin.json';
 
+declare const PLUGIN_VERSION: string;
+declare const PLUGIN_BUILD_DATETIME: string;
+
 await initPluginTranslations(pluginJson.id);
 
 export const plugin = new PanelPlugin<GeomapPanelOptions>(GeomapPanel)
@@ -103,6 +106,13 @@ export const plugin = new PanelPlugin<GeomapPanelOptions>(GeomapPanel)
         path: 'controls.tooltipOnClick',
         name: 'Tooltip requires click',
         description: 'When enabled, tooltips are shown only when clicking a marker.',
+        defaultValue: false,
+      })
+      .addBooleanSwitch({
+        category,
+        path: 'controls.dataLinksTargetBlank',
+        name: 'Open links in new tab',
+        description: `When enabled, generated data links and tooltip links open in a new browser tab. Build: v${PLUGIN_VERSION} (${PLUGIN_BUILD_DATETIME} UTC)` ,
         defaultValue: false,
       })
       .addBooleanSwitch({

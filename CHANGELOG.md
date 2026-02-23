@@ -1,4 +1,22 @@
 # Changelog
+## [2.0.16] (2026-02-23)
+
+### Added
+
+* add Map controls toggle `Open links in new tab` (`controls.dataLinksTargetBlank`) to control target behavior for generated links
+* add build stamp visibility in panel editor (`Build: v<version> (<datetime> UTC)`) so active plugin bundle is easy to verify
+
+### Changed
+
+* set generated data-link behavior to be toggle-driven and deterministic for both marker click data links and tooltip station links
+* keep tooltip link handling on the final minimal code path after temporary debugging interceptors
+
+### Fixed
+
+* remove popup image background color/opacity feature and restore popup image rendering to previous behavior
+* fix marker tooltip/data-link navigation so links no longer unexpectedly force new-tab behavior when toggle is disabled
+* ensure latest plugin UI changes are visible after deployment by validating with version bump workflow
+
 ## [2.0.8] (2026-02-22) - draft
 
 ### Added

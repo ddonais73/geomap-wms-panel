@@ -4,6 +4,7 @@ import path from 'path';
 import { TextEncoder, TextDecoder } from 'util';
 
 globalThis.PLUGIN_VERSION = require(path.resolve(process.cwd(), 'package.json')).version;
+globalThis.PLUGIN_BUILD_DATETIME = new Date().toISOString();
 
 
 globalThis.TextEncoder = TextEncoder;

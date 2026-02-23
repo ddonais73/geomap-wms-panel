@@ -25,6 +25,9 @@ export interface ControlsOptions {
   // Require click on marker to show tooltip instead of hover
   tooltipOnClick?: boolean;
 
+  // Open generated links in a new tab
+  dataLinksTargetBlank?: boolean;
+
   // Custom control: spatial filter
   showSpatialFilter?: boolean
 

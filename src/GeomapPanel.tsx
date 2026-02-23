@@ -27,7 +27,6 @@ import {
   DataHoverClearEvent,
   DataHoverEvent,
   DataFrame,
-  DataSelectEvent,
   // getFieldDisplayName,
   getFieldDisplayValuesProxy,
   ScopedVars,
@@ -140,135 +139,93 @@ export class GeomapPanel extends Component<Props, State> {
         })
     );
 
-    // this.props.eventBus.getStream(DataSelectEvent).subscribe((event) => {
-
-    // });
-
-    // Data links (click on feature and set variable. Works e.g. with name)
-    // E.g.: http://localhost:8002/d/dfe46662-eff7-43b7-8cce-dcea307d3b7d/20240227-qet-poc-copy?orgId=1&var-qet_name=${__data.fields["NAME"]}
-    // http://localhost:8002/d/c45df172-d369-455e-ae1c-994e196d4fd0/dz-m-demonstrator-treesense-copy?var-tree_sensor=${__data.fields.Sensor}
-    // Reference: https://grafana.com/docs/grafana/latest/panels-visualizations/configure-data-links/#data-variables
-    this.subs.add(
-      this.props.eventBus.getStream(DataSelectEvent).subscribe((event) => {
-        if (event.payload.data === undefined) {
-          return;
-        }
-
-        // Only continue if the data select event comes from this panel
-        // eslint-disable-next-line
-        if ((event as any).panelOrigin != this) { // check for reference equality (https://javascript.info/object-copy#comparison-by-reference)
-          return;
-        }
-
-        let dataFrame: DataFrame = event.payload.data!;
-        let rowIndex: number = event.payload.rowIndex!;
-
-        // Return if either dataframe or rowIndex are undefined
-        if (dataFrame === undefined || rowIndex === undefined) {
-          return;
-        }
-
-        // Get options for data layer with refId of dataframes and check if the data layer is configured for datalinks
-        const dataLayer = this.props.options.layers.find((el) => {
-          try {
-            return el.query!.options === dataFrame.refId;
-          } catch (error) {
-            return false;
-          }
-        })
-
-        if (!dataLayer) {
-          return;
-        }
-
-        // By default 'enabledForDataLinks' is considered to be true, even though it might not be defined.
-        // I.e. the value must be explicitely set to false to be excluded
-        if (dataLayer.enabledForDataLinks !== undefined && dataLayer.enabledForDataLinks === false) {
-          return;
-        }
-
-        // let proxyObject = getFieldDisplayValuesProxy({
-        //   frame: this.state.ttip!.data!,
-        //   rowIndex: this.state.ttip!.rowIndex!
-        // });
-        let proxyObject = getFieldDisplayValuesProxy({ // https://github.com/grafana/grafana/blob/main/packages/grafana-data/src/field/getFieldDisplayValuesProxy.ts
-          frame: dataFrame,
-          rowIndex: rowIndex
-        });
-        // console.log(proxyObject);
-
-        const scopedVars: ScopedVars = { ...{} }; // https://github.com/grafana/grafana/blob/61934588c579005de80c54b15f42f0d9449efd93/public/app/features/explore/utils/links.ts#L131
-        scopedVars['__data'] = {
-          value: {
-            name: dataFrame.name,
-            refId: dataFrame.refId,
-            fields: proxyObject,
-          },
-          text: 'Data',
-        };
-
-        let urlString: string | undefined = undefined;
-        try {
-          // console.warn("Currently only one link (the 1st one) is processed.");
-
-          // Interpolate url
-          urlString = this.props.replaceVariables(this.props.fieldConfig.defaults.links![0].url, // dataFrame.fields[0].config.links![0].url
-            scopedVars);
-          // console.log(urlString);
-        } catch (error) {
-          // console.log("Might have no links defined.");
-          // console.error(error);
-          return;
-        }
-
-        try {
-          let url: any = {};
-
-          try {
-            url = new URL(urlString);
-          } catch (error) {
-            url = new URL(urlString, location.origin);
-          }
-
-          let updateVars: Record<string, string>  = {};
-
-          for (const [key, value] of url.searchParams) {
-            updateVars[key] = value;
-          }
-
-          const localhostAliases = [
-            "localhost",
-            "127.0.0.1"
-          ]
-
-          if ((location.origin === url.origin || 
-            (localhostAliases.includes(url.hostname) && localhostAliases.includes(location.hostname) && url.port === location.port)) &&
-            (this.props.fieldConfig.defaults.links![0].targetBlank === undefined || 
-              this.props.fieldConfig.defaults.links![0].targetBlank === false)) {
-            if(location.pathname === url.pathname) {
-              // Update url with query parameters
-              locationService.partial({ ...updateVars }, true);
-            } else {
-              locationService.push(url.pathname + url.search);
-            }
-          } else {
-            if (this.props.fieldConfig.defaults.links![0].targetBlank === undefined || 
-              this.props.fieldConfig.defaults.links![0].targetBlank === false) {
-              // location.assign(url);
-              location.assign(url);
-            } else {
-              open(url, "_blank");
-            }
-            
-          }
-          
-        } catch (error) {
-          // console.error(error);
-          return;
-        }
-      })
-    );
   }
+
+  triggerDataLinkNavigation = (payload: GeomapHoverPayload) => {
+    if (payload.data === undefined || payload.rowIndex === undefined) {
+      return;
+    }
+
+    const dataFrame: DataFrame = payload.data;
+    const rowIndex: number = payload.rowIndex;
+
+    const dataLayer = this.props.options.layers.find((el) => {
+      try {
+        return el.query!.options === dataFrame.refId;
+      } catch (error) {
+        return false;
+      }
+    });
+
+    if (!dataLayer) {
+      return;
+    }
+
+    if (dataLayer.enabledForDataLinks !== undefined && dataLayer.enabledForDataLinks === false) {
+      return;
+    }
+
+    const proxyObject = getFieldDisplayValuesProxy({
+      frame: dataFrame,
+      rowIndex: rowIndex,
+    });
+
+    const scopedVars: ScopedVars = { ...{} };
+    scopedVars['__data'] = {
+      value: {
+        name: dataFrame.name,
+        refId: dataFrame.refId,
+        fields: proxyObject,
+      },
+      text: 'Data',
+    };
+
+    let urlString: string | undefined = undefined;
+    try {
+      urlString = this.props.replaceVariables(this.props.fieldConfig.defaults.links![0].url, scopedVars);
+    } catch (error) {
+      return;
+    }
+
+    try {
+      let url: any = {};
+
+      try {
+        url = new URL(urlString);
+      } catch (error) {
+        url = new URL(urlString, location.origin);
+      }
+
+      let updateVars: Record<string, string> = {};
+
+      for (const [key, value] of url.searchParams) {
+        updateVars[key] = value;
+      }
+
+      const openInNewTab = this.props.options.controls?.dataLinksTargetBlank === true;
+      if (openInNewTab) {
+        window.open(url.toString(), '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      const localhostAliases = ['localhost', '127.0.0.1'];
+
+      if (
+        location.origin === url.origin ||
+        (localhostAliases.includes(url.hostname) && localhostAliases.includes(location.hostname) && url.port === location.port)
+      ) {
+        if (location.pathname === url.pathname) {
+          locationService.partial({ ...updateVars }, true);
+        } else {
+          locationService.push(url.pathname + url.search);
+        }
+      } else {
+        location.assign(url);
+      }
+    } catch (error) {
+      return;
+    }
+  };
 
   componentDidMount() {
     lastGeomapPanelInstance = this;
@@ -480,9 +437,8 @@ export class GeomapPanel extends Component<Props, State> {
       }
     }
 
-    // Push data select event
     if (hasDataLinks) {
-      this.props.eventBus.publish({ ...this.hoverEvent, panelOrigin: this, type: "data-select" });
+      this.triggerDataLinkNavigation(this.hoverPayload);
     }
   }
 
@@ -918,7 +874,8 @@ export class GeomapPanel extends Component<Props, State> {
             <Tooltip tooltipData={{ttip: ttip, fixedFlag: this.tooltipFixed}} mapExtent={{
             extent: this.map?.getView().calculateExtent(this.map?.getSize()) as number[] ?? [], 
             projection: this.map?.getView().getProjection().getCode() ?? ""
-            }} mapSize={this.map?.getSize()} onClose={this.tooltipPopupClosed}></Tooltip>
+            }} mapSize={this.map?.getSize()} onClose={this.tooltipPopupClosed}
+            openLinksInNewTab={this.props.options.controls?.dataLinksTargetBlank === true}></Tooltip>
           </div>
           {/* <Tooltip ttip={ttip} mapExtent={{
             extent: this.map?.getView().calculateExtent(this.map?.getSize()) as number[] ?? [], 

@@ -1,6 +1,6 @@
 {
   "name": "felixrelleum-geomapmultiurl-panel",
-  "version": "2.0.14",
+  "version": "2.0.16",
   "description": "",
   "scripts": {
     "prebuild": "npm --no-git-tag-version version patch",
